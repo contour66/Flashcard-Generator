@@ -1,0 +1,5 @@
+
+"The snake syas hiss" "hiss"+ "hiss"
+"Chicken says bok" "bok"+ "bok"
+"duck says quack" "quack"+ "duck says"
+"duck goes quack" "quack"

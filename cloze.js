@@ -4,24 +4,106 @@ var fs = require("fs");
 
 var app = require ("./app.js");
 
-var ClozeCard = function (text, cloze){
+var logFile ="cloze.txt";
+
+var ClozeCard = function (err, text, caption, newText){
 
 	this.text = text;
-	this.cloze = cloze;
+	this.caption = caption;
+	this.newText= newText;
 
-	this.getQuestion = function() {
-		console.log(text);
-	};
+	
 
-	this.getCloze = function() {
-		console.log(cloze);
-	};
+	this.newCard = function() {
+		
+		var sentence = this.text;
 
+		var answer = this.caption;
 
+		// var newSent = this.newText;
 
+		var orgSent = (JSON.stringify(sentence , null, 2));
+		var orgAns = (JSON.stringify(answer , null, 2));			
+		// var orgPart = (JSON.stringify(newSent, null, 2));		+ "+"  + " " + orgPart
+		fs.appendFile(logFile, "\n"  + orgSent + " " + orgAns  , function(err) {
+	
+				// If an error was experienced we say it.
+			if (err) {    
+						
+				console.log(err);	  
+			}
+			
+			// If no error is experienced, we'll log the phrase "Content Added" to our node console.
+			else {    
+				
+				console.log("Content Added!");
+				
+			}
+			
+		});		
+	};	
 };
 
-ClozeCard();
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 	this.newSent = function () {
+
+// 		fs.readFile(logFile, "utf8", function(error, data) {
+//   				// We will then print the contents of data
+// 			var regex = new RegExp("ReGeX" + );
+// ...
+// string.replace(regex, "replacement");
+  				
+  				
+// 			});
+// 	}		
+// };
+// 
+// 		sentArr=$(sentArr).not(array2).get();
+// $('#a').text(array1.join(','));
+
+		
+		// var text = (JSON.stringify( question + " " + "+"  + " " + answer, null, 2));
+		// var logFile ="basic.txt";
+		// // console.log(JSON.stringify(question, answer, null, 2));
+		// fs.appendFile(logFile, "\r\n" + text, function(err) {
+	  		
+	 //  		// If an error was experienced we say it.
+		// 	if (err) {    
+		// 		console.log(err);	  
+		// 	}
+		// 	// If no error is experienced, we'll log the phrase "Content Added" to our node console.
+		// 	else {    
+		// 		console.log("Content Added!");	  
+		// 	}
+		// });	
+	// };
+
+
+	// };
+
+	// this.getCloze = function() {
+	// 	console.log(cloze);
+
+
+	// };
+
+
+
+// };
+
+// ClozeCard();
 
 // var newCloze = new ClozedCard()
 
@@ -55,4 +137,5 @@ module.exports = ClozeCard;
 // ClozeCard should have a property or method that contains or returns only the full text.
 // ClozeCard should throw or log an error when the cloze deletion does not appear in the input text.
 // Use prototypes to attach these methods, wherever possible.
+		
 		

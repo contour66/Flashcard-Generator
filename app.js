@@ -1,31 +1,26 @@
+
+
 var Cloze  =  require ("./cloze.js");
-
 var Basic = require ("./basic.js");
-
-// var Prompts = require ("./prompts.js");
-
+var fs = require("fs");
 var inquirer = require('inquirer');
 
-var line = function() {console.log("\n+-------------------+");}
-
-var initPrompt = [{
-
-		type: "confirm",
-		name: "continue",
-		message: "Hello, do you want create notecards?",
-		
-    	},
-]
+var line = function(){
+	
+	console.log("\n+-------------------+");
+};
 
 
-var keepGoing = [{
+var initCards = [{
 
 		type: "input",
-		name: "continue",
-		message: "Create another card?",
+		name: "userInput",
+		message: "Hello, do you want to [MAKE] or [REVIEW] cards?",
+		choices: ["MAKE", "REVIEW"]
 		
     	},
 ]
+
 
 var basicPrompt = [{
 
@@ -47,7 +42,7 @@ var basicPrompt = [{
 var clozePrompt = [{
 
 		type: "input",
-		name: "question",
+		name: "sentence",
 		message: "Full Sentence:",
 		
     	},
@@ -62,14 +57,7 @@ var clozePrompt = [{
 ]
 
 
-// function prompter (name) {
-
-// 	inquirer.prompt(name);
-// // }
-
-// prompter(clozePrompt);
-
-var chooseType =[{
+var chooseType = [{
 
 		type: "input",
 		name: "userInput",
@@ -79,39 +67,203 @@ var chooseType =[{
     	},
 ]
 
-inquirer.prompt(chooseType).then(function(response, err) {
+var verifyContinue =  [{
+
+		type: "input",
+		name: "userInput",
+		message: "Do you want to add another?",
+		choices: ["YES", "NO"]
+    	
+    	},
+]
+
+
+var whichReview = [{
+
+		type: "input",
+		name: "userInput",
+		message: "[BASIC] or [CLOZE]",
+		choices: ["BASIC", "CLOZE"],
+    	
+    	},
+]
+
+var count = 0;
+
+function choose () {
+
+	inquirer.prompt(chooseType).then(function(response, err){
+		
+
+		var input = response.userInput;
+
+		if (input.toUpperCase() === "BASIC"){
+			
+			line();
+			console.log("Enter the information below.");
+			line();
+
+			createBasic();
+		}
+
+		else if (input.toUpperCase() === "CLOZE"){
+			
+			line();
+			console.log("INSTRUCTIONS");
+			line ();
+			console.log("Enter the information below.")
+			console.log("First enter the full sentence and then the answer that is a part of that sentence."); // Next enter your incomplete sentence			line();
+			console.log("FOR EXAMPLE");
+			console.log("Full sentence: The cow says moo");
+			console.log("Answer: moo");
+			// console.log("Partial: The cow says");
+
+			createCloze();
+		}
+
+		else {}
+
+	});
+}
+
+function createBasic() {
+	// var count = 0;
 	
-	var input = response.userInput;
-
-
-	if (input.toUpperCase() === "BASIC"){  //using dot notation to grab input
-		
-		// console.log(answers.userInput);
-		console.log("Ok let's start!");
-		line();
-		console.log("Enter the information below.");
-		line();
-		
+	// if (count  >= 0) {
 		inquirer.prompt(basicPrompt).then(function(response, err){
 			
 			// console.log(response.question);
-			// console.log(response.answer);
-			
+			// console.log(response.answer);	
 			var q = response.question; // assigning respnses to variables to pass
 			var a = response.answer;
 			
 			var newBasic = new Basic(err, q, a);
 
+			//Retrieve info form basic.js and run
 			newBasic.newCard();
-		  	//Retrieve info form basic.js and run
+
+			// addBasic();
 		});
-	}
+		
+}
+
+function createCloze(){
+
+	inquirer.prompt(clozePrompt).then(function(response, err){
+		
+		// console.log(response.question);
+		// console.log(response.answer);	
+		var s = response.sentence; // assigning respnses to variables to pass
+		var a = response.answer;
+		var n = response.partial;
+		
+		var newCloze = new Cloze(err, s, a, n);
+
+		// //Retrieve info form basic.js and run
+		newCloze.newCard();
+		// newCloze.newSent();
+	  	
+	});
+}
+
+function reviewCards() {
+
+		inquirer.prompt(whichReview).then(function(response, err){
+
+		var input = response.userInput;
+
+		if (input.toUpperCase() === "BASIC"){
+
+				fs.readFile("basic.txt", "utf8", function(error, data) {
+  				
+  				if (!err){// We will then print the contents of data
+  					
+  					var cards = data.split("\r\n");
+					var count = 0;
+							
+				    cards.forEach(function (card) {
+						
+						if(card.length > 50){
+							count++;
+							card = JSON.parse(cards);
+							
+						
+  						
+							console.log(card.question);
+						}
+					});	
+				};
+  			});
+			
+			line();
+			console.log("yep");
+			line();
+
+			// reviewBasic();
+		}
+
+		else if (input.toUpperCase() === "CLOZE"){
+			
+			line();
+			console.log("INSTRUCTIONS");
+			line ();
+			
+			// console.log("Partial: The cow says");
+
+			// reviewCloze();
+		}
+
+		else {}
+
+	});
+
+}
+
+
+
+// function addBasic (){
+
+// 	inquirer.prompt(verifyContinue).then(function(response, err){
+
+// 		var input = response.userInput;
 	
-	else if (input === "Cloze"){
+		
+// 		if (input === "YES") {
+
+				
+// 		createBasic();
+// 		// 	}
+
+// 		// count ++;
+		
+// 		}
+
+// 	});
+// }
+
+
+//Prompt user to ask if they would like to make or create cards
+inquirer.prompt(initCards).then(function(response, err) {
 	
-		console.log("something else");	
+	var input = response.userInput;
+
+
+	if (input.toUpperCase() === "MAKE" ){
+		//Run choose function to prompt user what kind of card to make
+		choose();
+
+	
+
 	}
 
+	else if (input.toUpperCase() === "REVIEW"){
+
+		console.log("Ok let's review!");
+		reviewCards();
+
+	}
+
+	
 	else {
 
 		console.log("Please Make a choice");	
@@ -119,6 +271,42 @@ inquirer.prompt(chooseType).then(function(response, err) {
 	}
 	
 });
+
+
+
+
+
+
+	
+
+	// if (input.toUpperCase()=== "MAKE" ){  //using dot notation to grab input
+		
+	// 	// console.log(answers.userInput);
+	// 	// console.log("Ok let's start!");
+	// 	line();
+	// 	console.log("Enter the information below.");
+	// 	line();
+
+	// 	initBasic();
+
+
+		
+		// inquirer.prompt(basicPrompt).then(function(response, err){
+			
+		// 	// console.log(response.question);
+		// 	// console.log(response.answer);
+			
+		// 	var q = response.question; // assigning respnses to variables to pass
+		// 	var a = response.answer;
+			
+		// 	var newBasic = new Basic(err, q, a);
+
+		// 	newBasic.newCard();
+		//   	//Retrieve info form basic.js and run
+		// });
+	// }
+	
+	
 
 
 // console.log(userInput);
