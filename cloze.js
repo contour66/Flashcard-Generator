@@ -6,11 +6,11 @@ var app = require ("./app.js");
 
 var logFile ="cloze.txt";
 
-var ClozeCard = function (err, text, caption, newText){
+var ClozeCard = function (err, text, newText){
 
 	this.text = text;
 	this.caption = caption;
-	this.newText= newText;
+	// this.newText= newText;
 
 	
 
@@ -42,6 +42,28 @@ var ClozeCard = function (err, text, caption, newText){
 			
 		});		
 	};	
+
+	this.reviewCard = function () {
+
+			var goodGuess = this.answer;
+			var badGuess = this.text;
+
+
+			// Create regular expression pattern to case insensitive match the answer.
+			var pattern = new RegExp(reviewCard.answer, 'i');
+
+			// Show the question without the answer.
+			console.log('Question:');
+			console.log(reviewCard.question.replace(pattern, '...'));
+
+			// Example of a correct guess.
+			console.log('Guess: ' + goodGuess);
+			console.log((pattern.test(goodGuess) ? 'True' : 'False'));
+
+			// Example of an incorrect guess.
+			console.log('Guess: ' + badGuess);
+			console.log((pattern.test(badGuess) ? 'True' : 'False'));
+	}
 };
 
 

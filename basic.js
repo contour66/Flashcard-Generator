@@ -2,55 +2,44 @@ var fs = require("fs");
 
 var app = require ("./app.js");
 
+var storeCard = require ("./basic.json")
+console.log(storeCard);
+var BasicCard = function (err, front, back){
 
-
-var BasicCard = function (err, question, answer, newSent ){
-
-	this.question = question;
-	this.answer = answer;
-	
+	this.front = front;
+	this.back = back;
 	
 	
 	this.newCard = function() {
-		var text = (JSON.stringify( question + " " + "+"  + " " + answer , null, 2));
-		var logFile ="basic.txt";
-		// console.log(JSON.stringify(question, answer, null, 2));
-		fs.appendFile(logFile, "\r\n" + text, function(err) {
-	  		
-	  		// If an error was experienced we say it.
-			if (err) {    
-				console.log(err);	  
-			}
-			// If no error is experienced, we'll log the phrase "Content Added" to our node console.
-			else {    
-				console.log("Content Added!");	  
-			}
+			
+		inquirer.prompt([{
+			type: "input",
+			name: "front",
+			message: "Question:",
+	    	},
+
+	    	{
+	    	type: "input",
+			name: "back",
+			message: "Answer:",
+	    	},
+		]).then(function(answers, err){		
+			var card = new BasicCard(answers.front, answers.back);
+			storeCard.push(card);
+			var newCard = JSON.stringify(storeCard, null);
+			fs.appendFile ('./basic.JSON', newCard, function(err){
+			if (err) throw err; 
+			console.log(card);   
+			console.log(err);	  
+			})
+			// else {    
+			// 	console.log("Content Added!");	  
+			// }
 		});	
 	};
-
-	this.reviewCard = function(){
-
-		
-
-
-
-	}
-
 };
-
-	//}
-
-
-
-
-
-// object -> string
-	// JSON.stringify(objName)
-
-	// string -> object
-	// JSON.parse(stringContents)
-	// console.log(this.answer, this.question, "this part is working");
 	
 	
+	BasicCard();
 
-module.exports = BasicCard;
+// module.exports = BasicCard;
